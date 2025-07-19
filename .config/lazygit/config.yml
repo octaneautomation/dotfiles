@@ -1,0 +1,63 @@
+# --------------------------------------------------------
+# LazyGit Configuration File (~/.config/lazygit/config.yml)
+# --------------------------------------------------------
+# This file customizes LazyGit's behavior and UI.
+# Designed for enhanced productivity and compatibility with:
+#   - Git best practices
+#   - GPG signing
+#   - Git Delta for beautiful diffs
+#
+# Key features:
+#   ✅ Auto-refresh and auto-fetch for up-to-date status
+#   ✅ Enhanced diff rendering with Git Delta
+#   ✅ Consistent merge conflict style with .gitconfig
+#   ✅ Nerd Fonts support for icons
+# --------------------------------------------------------
+
+gui:
+  # Show the file tree in the UI (helps visualize changed files by directory)
+  showFileTree: true
+
+  # Enable Nerd Fonts icons (version 3 for latest font packs)
+  nerdFontsVersion: "3"
+
+  # Customize active window border for better visibility
+  theme:
+    activeBorderColor:
+      - green
+      - bold
+
+  # Refresh the UI automatically when changes occur
+  autoRefresh: true
+
+git:
+  # Enable background auto-fetch from remotes
+  autoFetch: true
+
+  # Merge conflict settings
+  merging:
+    # Use 'diff3' style conflicts for consistency with gitconfig
+    conflict: "diff3"
+
+  # Configure Git's pager for diffs (used when viewing logs/diffs in LazyGit)
+  paging:
+    # Always use color output
+    colorArg: always
+
+    # Use Git Delta for rich diff rendering
+    #   --dark          : Enables dark mode colors
+    #   --paging=never  : Prevents extra pagination within LazyGit
+    pager: "delta --dark --paging=never"
+
+  # Commit options
+  commit:
+    # Whether to add '--signoff' automatically (we set to false since GPG signing handles authenticity)
+    signOff: false
+
+    # Show commit diff before confirming
+    verbose: true
+
+update:
+  # Prompt for updates when a new LazyGit version is available
+  method: prompt
+

@@ -1,16 +1,77 @@
-# This is Git's per-user configuration file.
+# ---------------------------------------
+# Git Configuration File (~/.gitconfig)
+# ---------------------------------------
+# This file sets user-specific Git preferences.
+# Consistent identity, security, and convenience.
+
 [user]
-# Please adapt and uncomment the following lines:
-	name = Octane Automation
-	email = git@octaneautomation.com
-	signingkey = 90F539F0E3E48B41
+    name = Octane Automation
+    email = git@octaneautomation.com
+    signingkey = 90F539F0E3E48B41
+
 [credential]
-	helper = cache --timeout=86400
+    helper = cache --timeout=86400
+    # Alternative: use 'manager-core' on Windows or 'store' for persistent creds
+
 [commit]
-	gpgsign = true
+    gpgsign = true
+
 [tag]
-	gpgsign = true
+    gpgsign = true
+
 [gpg]
-	program = gpg
+    program = gpg
+
 [init]
-	defaultBranch = main
+    defaultBranch = main
+
+[color]
+    ui = auto
+
+[core]
+    quotepath = false
+    autocrlf = input
+    pager = less -FRSX
+
+[alias]
+    st = status -sb
+    co = checkout
+    ci = commit
+    br = branch
+    df = diff
+    lg = log --oneline --graph --decorate --all
+    amend = commit --amend --no-edit
+    unstage = reset HEAD --
+
+[pull]
+    rebase = true
+
+[push]
+    default = current
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    mnemonicprefix = true
+    renames = true
+
+[fetch]
+    prune = true
+
+[rerere]
+    enabled = true
+
+[status]
+    showStash = true
+
+[log]
+    date = relative
+
+[interactive]
+    diffFilter = diff-highlight
+
+# Optional: prevent accidental force-push on main
+[receive]
+    denyNonFastforwards = true
+
