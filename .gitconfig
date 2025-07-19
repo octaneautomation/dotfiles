@@ -1,0 +1,16 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Octane Automation
+	email = git@octaneautomation.com
+	signingkey = 90F539F0E3E48B41
+[credential]
+	helper = cache --timeout=86400
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg]
+	program = gpg
+[init]
+	defaultBranch = main
