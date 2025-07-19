@@ -1,0 +1,128 @@
+# Starship configuration for an informative yet clean prompt
+
+# ───────────────────────────────
+# GLOBAL SETTINGS
+# ───────────────────────────────
+add_newline = true
+command_timeout = 1000
+format = """
+$env_var\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$docker_context\
+$kubernetes\
+$package\
+$python\
+$nodejs\
+$ruby\
+$rust\
+$golang\
+$php\
+$java\
+$lua\
+$cmd_duration\
+$status\
+$line_break\
+$character
+"""
+
+# ───────────────────────────────
+# PROMPT CHARACTER
+# ───────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vicmd_symbol = "[❮](bold blue)"
+
+# ───────────────────────────────
+# USER & HOST
+# ───────────────────────────────
+[username]
+format = "[$user](bold yellow) "
+show_always = true
+
+[hostname]
+format = "on [$hostname](bold blue) "
+ssh_only = false
+
+# ───────────────────────────────
+# DIRECTORY
+# ───────────────────────────────
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+format = "in [$path](bold cyan) "
+
+# ───────────────────────────────
+# GIT MODULES
+# ───────────────────────────────
+[git_branch]
+symbol = "🌱 "
+format = "[$symbol$branch](bold purple) "
+
+[git_status]
+format = "[($all_status$ahead_behind )](dimmed green)"
+conflicted = "⚠"
+ahead = "⇡"
+behind = "⇣"
+staged = "+"
+deleted = "✖"
+untracked = "?"
+modified = "~"
+
+[git_state]
+format = "\\([$state( $progress_current/$progress_total)]\\) "
+
+# ───────────────────────────────
+# LANGUAGES / RUNTIMES
+# ───────────────────────────────
+[python]
+symbol = "🐍 "
+format = "[$symbol$version](bold green) "
+
+[nodejs]
+symbol = "⬢ "
+format = "[$symbol$version](bold green) "
+
+[ruby]
+symbol = "💎 "
+format = "[$symbol$version](bold red) "
+
+[rust]
+symbol = "🦀 "
+format = "[$symbol$version](bold red) "
+
+# ───────────────────────────────
+# PACKAGE (npm, cargo, etc.)
+# ───────────────────────────────
+[package]
+format = "[📦 $version](bold blue) "
+
+# ───────────────────────────────
+# STATUS / EXIT CODES
+# ───────────────────────────────
+[status]
+disabled = true  # Disable [Systemd] and verbose status
+
+# ───────────────────────────────
+# CONTEXT (container, kubernetes)
+# ───────────────────────────────
+[container]
+disabled = false
+format = "[$symbol$context](bold red) "
+
+[kubernetes]
+disabled = false
+symbol = "☸ "
+format = "[$symbol$context](bold purple) "
+
+# ───────────────────────────────
+# CMD DURATION
+# ───────────────────────────────
+[cmd_duration]
+min_time = 2000
+format = "took [$duration](bold yellow) "
