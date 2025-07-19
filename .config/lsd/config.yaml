@@ -1,0 +1,66 @@
+# ==========================================================
+# LSD Configuration File
+# Location: ~/.config/lsd/config.yaml
+#
+# Sets useful defaults for lsd (modern ls replacement):
+#   ✔ Icons (auto)
+#   ✔ Colors
+#   ✔ Directory grouping
+#   ✔ Human-readable sizes (short)
+#   ✔ Custom date format
+#   ✔ Grid layout by default
+#   ✔ Tree aliases can override
+# ==========================================================
+
+classic: false
+
+blocks:
+  - permission
+  - user
+  - group
+  - size
+  - date
+  - name
+
+color:
+  when: auto        # never | auto | always
+  theme: default    # default | custom
+
+date: "+%Y-%m-%d %H:%M"   # Custom date format
+
+dereference: false
+
+# display: all      # Uncomment if you want to show hidden files by default
+display: almost-all
+
+icons:
+  when: auto        # always | auto | never
+  theme: fancy      # fancy | unicode
+  separator: " "
+
+ignore-globs:
+  - ".git"
+  - "node_modules"
+
+indicators: true
+
+layout: grid        # grid | tree | oneline
+
+recursion:
+  enabled: false
+  depth: 2
+
+size: short         # default | short | bytes
+
+permission: rwx     # rwx | octal | disable
+
+sorting:
+  column: name      # extension | name | time | size | version
+  reverse: false
+  dir-grouping: first  # first | last | none
+
+no-symlink: false
+total-size: false
+hyperlink: auto      # always | auto | never
+symlink-arrow: " ➔ "
+header: true
