@@ -2,3 +2,4 @@
 .gpg-backups/public.asc
 .gpg-backups/secrets.asc
 .gpg-backups/ownertrust.txt
+.local/bin/load-gpg-passphrase.sh
