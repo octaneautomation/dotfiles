@@ -77,12 +77,14 @@ export LC_ALL=en_GB.UTF-8
 # =====================================================================
 # 2. Starship Prompt (Optimized Loading)
 # =====================================================================
+# Load Starship from GitHub Releases for maximum speed
 zinit ice from"gh-r" as"command" atload'eval "$(starship init zsh)"'
-zinit load starship/starship
+zinit light starship/starship
 
 # =====================================================================
 # 3. Core Zsh Enhancements
 # =====================================================================
+# Provides completions, autosuggestions, syntax highlighting
 zinit for \
     atload"zicompinit; zicdreplay" \
     blockf \
@@ -95,10 +97,18 @@ zinit for \
 # =====================================================================
 # 4. fzf Integration
 # =====================================================================
-export PATH="$HOME/.fzf/bin:$PATH" # Add if installed manually
+# Ensure PATH includes ~/.fzf/bin if installed manually
+export PATH="$HOME/.fzf/bin:$PATH"
+
+# Load fzf with optimized lazy loading
+zinit ice wait lucid nocd nocompile
 zinit light junegunn/fzf
+
+# Load fzf-tab for interactive tab-completion
 zinit ice lucid wait"0a"
 zinit light Aloxaf/fzf-tab
+
+# Load fzf-git extras for Git fuzzy navigation
 zinit snippet "https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
 
 # =====================================================================
@@ -144,10 +154,22 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' switch-group 'ctrl-/'
 
 # =====================================================================
-# 7. Debian fzf Examples (Required on Debian)
+# 7. fzf Key Bindings & Completions (macOS vs Linux)
 # =====================================================================
-[[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
-[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS: Homebrew install uses ~/.fzf.zsh
+    if [ -f ~/.fzf.zsh ]; then
+        source ~/.fzf.zsh
+    else
+        if command -v fzf >/dev/null; then
+            echo "⚠️ fzf is installed but key bindings aren't. Run: $(brew --prefix fzf)/install"
+        fi
+    fi
+else
+    # Linux (Debian/Ubuntu): Use system examples if available
+    [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+fi
 
 # =====================================================================
 # 8. Universal Launcher (Ctrl+Space)
@@ -192,3 +214,4 @@ bindkey "^[[B" down-line-or-beginning-search
 # Terminfo-based bindings for portability
 bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
 bindkey "${terminfo[kcud1]}" down-line-or-beginning-search
+
