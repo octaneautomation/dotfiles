@@ -19,7 +19,7 @@ chmod 600 "$BACKUP_DIR"/*
 
 echo "Backup complete."
 echo "Add the following to .yadm/encrypt if not already present:"
-echo "  .gpg-backups/public.asc"
-echo "  .gpg-backups/secrets.asc"
-echo "  .gpg-backups/ownertrust.txt"
+echo "  .config/yadm/gpg-backups/public.asc"
+echo "  .config/yadm/gpg-backups/secrets.asc"
+echo "  .config/yadm/gpg-backups/ownertrust.txt"
 

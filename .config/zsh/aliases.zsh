@@ -28,7 +28,6 @@
 #
 # [ Zsh Reloading ]
 #   reload-zsh → Restart Zsh (keeps PWD)
-#   rz         → Reload Zsh config in-place
 #
 # [ System Info ]
 #   myip    → Show public IP address
@@ -63,7 +62,6 @@
 #   mkcd     → Create a directory and cd into it
 #   rmdir    → Safely remove a directory (asks for confirmation)
 #
-# =============================================================================
 
 # -----------------------------------------------------------------------------
 # Utility: Check if a command exists
@@ -122,10 +120,9 @@ reload_zsh() {
     exec zsh --login
 }
 alias reload-zsh='reload_zsh'
-alias rz='source "$ZDOTDIR/.zshrc" && echo "✅ Reloaded Zsh config"'
 
 # -----------------------------------------------------------------------------
-# 5. File/Directory search (prefer fd-find if available)
+# 5. File/Directory search (prefer fd if available)
 # -----------------------------------------------------------------------------
 if command_exists fd; then
     alias fd='fd --type d'   # Search directories
@@ -183,10 +180,16 @@ mkcd() {
 # 9. Safer rmdir with confirmation
 # -----------------------------------------------------------------------------
 rmdir() {
-    [ $# -eq 0 ] && { echo "Usage: rmdir <directory>"; return 1; }
+    [ $# -eq 0 ] && {
+        echo "Usage: rmdir <directory>"
+        return 1
+    }
     local dir="$1"
-    [ ! -d "$dir" ] && { echo "Error: '$dir' is not a directory."; return 1; }
-    read -p "Are you sure you want to delete '$dir'? [y/N]: " confirm
+    [ ! -d "$dir" ] && {
+        echo "Error: '$dir' is not a directory."
+        return 1
+    }
+    read "?Are you sure you want to delete '$dir'? [y/N]: " confirm
     [[ "$confirm" =~ ^[Yy]$ ]] && rm -rf "$dir" && echo "'$dir' removed." || echo "Canceled."
 }
 
@@ -206,67 +209,81 @@ alias fkill='ps -ef | sed 1d | fzf | awk "{print \$2}" | xargs kill -9'
 alias fgb='git branch | fzf | xargs git checkout'
 
 # -----------------------------------------------------------------------------
-# 12. Show all aliases & functions with descriptions
+# 12. help-aliases: Show all aliases & functions with descriptions
 # -----------------------------------------------------------------------------
 help-aliases() {
-    echo "📜 Available Aliases & Functions:"
+    local BOLD="\033[1m"
+    local GREEN="\033[32m"
+    local CYAN="\033[36m"
+    local YELLOW="\033[33m"
+    local RESET="\033[0m"
+
+    echo -e "${BOLD}${CYAN}📜 Available Aliases & Functions:${RESET}\n"
+
+    echo -e "${BOLD}${CYAN}=== Directory Listings ===${RESET}"
+    echo -e "  ${GREEN}ls${RESET}    ${YELLOW}→${RESET} List files (colorized, long format if possible)"
+    echo -e "  ${GREEN}ll${RESET}    ${YELLOW}→${RESET} Long list including hidden files"
+    echo -e "  ${GREEN}la${RESET}    ${YELLOW}→${RESET} Long list excluding '.' and '..'"
+    echo -e "  ${GREEN}l${RESET}     ${YELLOW}→${RESET} Column view"
     echo
-    echo "=== Directory Listings ==="
-    echo "  ls      → List files (colorized, long format if possible)"
-    echo "  ll      → Long list including hidden files"
-    echo "  la      → Long list excluding '.' and '..'"
-    echo "  l       → Column view"
+
+    echo -e "${BOLD}${CYAN}=== Editors & Config Shortcuts ===${RESET}"
+    echo -e "  ${GREEN}vim, vi, nano${RESET}  ${YELLOW}→${RESET} Open preferred editor (\$EDITOR)"
+    echo -e "  ${GREEN}zshrc${RESET}          ${YELLOW}→${RESET} Edit Zsh config"
+    echo -e "  ${GREEN}vimrc${RESET}          ${YELLOW}→${RESET} Edit Vim config"
     echo
-    echo "=== Editors & Config Shortcuts ==="
-    echo "  vim, vi, nano  → Open preferred editor (\$EDITOR)"
-    echo "  zshrc          → Edit Zsh config"
-    echo "  vimrc          → Edit Vim config"
+
+    echo -e "${BOLD}${CYAN}=== File Viewing ===${RESET}"
+    echo -e "  ${GREEN}cat${RESET}            ${YELLOW}→${RESET} Syntax-highlighted viewer (bat if available)"
+    echo -e "  ${GREEN}catr${RESET}           ${YELLOW}→${RESET} Raw file output (no color, no paging)"
     echo
-    echo "=== File Viewing ==="
-    echo "  cat            → Syntax-highlighted viewer (bat if available)"
-    echo "  catr           → Raw file output (no color, no paging)"
+
+    echo -e "${BOLD}${CYAN}=== Zsh Config Reloading ===${RESET}"
+    echo -e "  ${GREEN}reload-zsh${RESET}     ${YELLOW}→${RESET} Restart Zsh (preserves PWD)"
+    echo -e "  ${GREEN}rz${RESET}             ${YELLOW}→${RESET} Reload config in current shell"
     echo
-    echo "=== Zsh Config Reloading ==="
-    echo "  reload-zsh     → Restart Zsh (preserves PWD)"
-    echo "  rz             → Reload config in current shell"
+
+    echo -e "${BOLD}${CYAN}=== System Utilities ===${RESET}"
+    echo -e "  ${GREEN}myip${RESET}           ${YELLOW}→${RESET} Show public IP"
+    echo -e "  ${GREEN}httpserve${RESET}      ${YELLOW}→${RESET} Start Python HTTP server on port 2182"
+    echo -e "  ${GREEN}df${RESET}             ${YELLOW}→${RESET} Disk usage via duf (if installed)"
+    echo -e "  ${GREEN}duu${RESET}            ${YELLOW}→${RESET} Disk usage via ncdu (if installed)"
     echo
-    echo "=== System Utilities ==="
-    echo "  myip           → Show public IP"
-    echo "  httpserve      → Start Python HTTP server on port 2182"
-    echo "  df             → Disk usage via duf (if installed)"
-    echo "  duu            → Disk usage via ncdu (if installed)"
+
+    echo -e "${BOLD}${CYAN}=== Search Shortcuts ===${RESET}"
+    echo -e "  ${GREEN}fd <pattern>${RESET}   ${YELLOW}→${RESET} Find directories (fd-find if available, else find)"
+    echo -e "  ${GREEN}ff <pattern>${RESET}   ${YELLOW}→${RESET} Find files"
     echo
-    echo "=== Search Shortcuts ==="
-    echo "  fd <pattern>   → Find directories (fd-find if available, else find)"
-    echo "  ff <pattern>   → Find files"
+
+    echo -e "${BOLD}${CYAN}=== fzf + fd Power Tools ===${RESET}"
+    echo -e "  ${GREEN}fdf${RESET}            ${YELLOW}→${RESET} Fuzzy find file & open in editor"
+    echo -e "  ${GREEN}fdd${RESET}            ${YELLOW}→${RESET} Fuzzy find directory & cd into it"
+    echo -e "  ${GREEN}ffo${RESET}            ${YELLOW}→${RESET} Fuzzy find any file/dir & open in editor"
     echo
-    echo "=== fzf + fd Power Tools ==="
-    echo "  fdf            → Fuzzy find file & open in editor"
-    echo "  fdd            → Fuzzy find directory & cd into it"
-    echo "  ffo            → Fuzzy find any file/dir & open in editor"
+
+    echo -e "${BOLD}${CYAN}=== fzf Utilities ===${RESET}"
+    echo -e "  ${GREEN}fh${RESET}             ${YELLOW}→${RESET} Search history & copy to clipboard"
+    echo -e "  ${GREEN}fkill${RESET}          ${YELLOW}→${RESET} Fuzzy kill processes"
+    echo -e "  ${GREEN}fgb${RESET}            ${YELLOW}→${RESET} Fuzzy select git branch & switch"
+    echo -e "  ${GREEN}fo${RESET}             ${YELLOW}→${RESET} Fuzzy open file in editor"
+    echo -e "  ${GREEN}fcd${RESET}            ${YELLOW}→${RESET} Fuzzy cd into directory"
     echo
-    echo "=== fzf Utilities ==="
-    echo "  fh             → Search history & copy to clipboard"
-    echo "  fkill          → Fuzzy kill processes"
-    echo "  fgb            → Fuzzy select git branch & switch"
-    echo "  fo             → Fuzzy open file in editor"
-    echo "  fcd            → Fuzzy cd into directory"
+
+    echo -e "${BOLD}${CYAN}=== Dotfiles Shortcuts (yadm) ===${RESET}"
+    echo -e "  ${GREEN}yst${RESET}            ${YELLOW}→${RESET} yadm status"
+    echo -e "  ${GREEN}ya${RESET}             ${YELLOW}→${RESET} yadm add"
+    echo -e "  ${GREEN}yd${RESET}             ${YELLOW}→${RESET} yadm diff"
+    echo -e "  ${GREEN}yds${RESET}            ${YELLOW}→${RESET} yadm diff --staged"
+    echo -e "  ${GREEN}yc${RESET}             ${YELLOW}→${RESET} yadm commit"
+    echo -e "  ${GREEN}yp${RESET}             ${YELLOW}→${RESET} yadm push"
+    echo -e "  ${GREEN}ysync${RESET}          ${YELLOW}→${RESET} Interactive yadm sync: show status, prompt, commit & push"
     echo
-    echo "=== Dotfiles Shortcuts (yadm) ==="
-    echo "  yst            → yadm status"
-    echo "  ya             → yadm add"
-    echo "  yd             → yadm diff"
-    echo "  yds            → yadm diff --staged"
-    echo "  yc             → yadm commit"
-    echo "  yp             → yadm push"
-    echo "  ysync          → Interactive yadm sync: show status, prompt for untracked, confirm, commit & push"
-    echo
-    echo "=== Helper Functions ==="
-    echo "  mkcd <dir>     → Create a directory and cd into it"
-    echo "  rmdir <dir>    → Safely remove directory (confirmation required)"
+
+    echo -e "${BOLD}${CYAN}=== Helper Functions ===${RESET}"
+    echo -e "  ${GREEN}mkcd <dir>${RESET}     ${YELLOW}→${RESET} Create a directory and cd into it"
+    echo -e "  ${GREEN}rmdir <dir>${RESET}    ${YELLOW}→${RESET} Safely remove directory (confirmation required)"
     echo
 }
-
 alias help-aliases="help-aliases"
 
 # -----------------------------------------------------------------------------
@@ -318,6 +335,5 @@ ysync() {
         echo "❌ Operation canceled."
     fi
 }
-
 alias ysync="ysync"
 
