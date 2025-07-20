@@ -1,4 +1,4 @@
 .ssh
-.config/yadm/gpg-backups/public.asc
-.config/yadm/gpg-backups/secrets.asc
-.config/yadm/gpg-backups/ownertrust.txt
+.gpg-backups/public.asc
+.gpg-backups/secrets.asc
+.gpg-backups/ownertrust.txt
