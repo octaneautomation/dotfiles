@@ -1,0 +1,86 @@
+#!/bin/sh
+# Clean modular YADM bootstrap driver
+
+set -e
+
+GIT_HOST="github.com"
+GIT_USER="octaneautomation"
+GIT_REPO="dotfiles"
+GIT_URL="https://${git_host}/${git_user}/"
+
+# Variables for temporary files/directories.
+TEMP_FILE="$(mktemp -u)"
+TEMP_DIR="$(mktemp -d)"
+
+# Set XDG directories.
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_CACHE_HOME="${HOME}/.cache"
+export XDG_DATA_HOME="${HOME}/.local/share"
+
+# Set Zsh configuration directory.
+export ZDOTDIR="${HOME}/.config/zsh"
+# Set Vim configuration directory.
+export VIMINIT=":source $XDG_CONFIG_HOME/vim/vimrc"
+
+# Set user bin directory.
+export USER_BIN_DIR="${HOME}/.local/bin"
+
+BOOTSTRAP_D="$(dirname "$0")/bootstrap.d"
+LOG_FILE="$HOME/yadm_bootstrap.log"
+DRY_RUN=0
+VERBOSE=0
+
+# Parse options
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    --verbose) VERBOSE=1 ;;
+    --help)
+      printf "Usage: %s [--dry-run] [--verbose]\n" "$0"
+      exit 0
+      ;;
+  esac
+done
+
+# Load colors globally if available
+if [ -f "$BOOTSTRAP_D/10-colors.sh" ]; then
+    . "$BOOTSTRAP_D/10-colors.sh"
+else
+    # Fallback colors if file missing
+    Cyan="\033[0;36m"; Blue="\033[0;34m"; Green="\033[0;32m"
+    Yellow="\033[0;33m"; Red="\033[0;31m"; Color_Off="\033[0m"
+fi
+
+# Export shared vars for sub-scripts
+export DRY_RUN VERBOSE LOG_FILE
+export Cyan Blue Green Yellow Red Color_Off
+
+# Logging helpers
+strip_colors() { printf '%s\n' "$@" | sed 's/\x1B\[[0-9;]*[A-Za-z]//g'; }
+log() { printf "%b\n" "$@"; strip_colors "$@" >> "$LOG_FILE"; }
+log_section() { printf "%b%s%b\n" "$Cyan" "$@" "$Color_Off"; strip_colors "$@" >> "$LOG_FILE"; }
+
+# Start
+log_section "------------------------------------"
+log_section "- YADM Bootstrap Driver            -"
+log_section "------------------------------------"
+log "Log file: $LOG_FILE"
+log "Dry-run mode: $DRY_RUN"
+log "Verbose mode: $VERBOSE"
+
+[ -d "$BOOTSTRAP_D" ] || { printf "Error: %s not found\n" "$BOOTSTRAP_D"; exit 1; }
+
+# Execute scripts in sorted order
+for script in $(find -L "$BOOTSTRAP_D" -type f ! -name '*##*' ! -name '*~' | sort); do
+    [ -x "$script" ] || continue
+    log_section "Running: $script"
+    if ! "$script"; then
+        printf "%bError:%b bootstrap '%s' failed\n" "$Red" "$Color_Off" "$script" >&2
+        exit 1
+    fi
+done
+
+log_section "------------------------------------"
+log_section "- Bootstrap Completed Successfully -"
+log_section "------------------------------------"
+
