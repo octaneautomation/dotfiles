@@ -75,6 +75,12 @@ fi
 # ---------- Install a package ----------
 install_pkg() {
     pkg="$1"
+
+    # Map fd-find to fd on macOS
+    if [ "$system_type" = "Darwin" ] && [ "$pkg" = "fd-find" ]; then
+        pkg="fd"
+    fi
+
     if [ "$system_type" = "Linux" ]; then
         if [ -n "$SUDO_CMD" ] || [ "$(id -u)" -eq 0 ]; then
             if [ "${DRY_RUN:-0}" -eq 1 ]; then
@@ -112,6 +118,7 @@ for raw_pkg in $PREREQUISITES; do
             ;;
     esac
 
+    # Skip macOS if package is Linux-only (and vice versa)
     if command -v "$pkg" >/dev/null 2>&1; then
         printf "%b%s already installed%b\n" "$Green" "$pkg" "$Color_Off"
     else
