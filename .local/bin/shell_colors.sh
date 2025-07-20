@@ -1,0 +1,1 @@
+/root/.config/yadm/bootstrap.d/10-colors.sh

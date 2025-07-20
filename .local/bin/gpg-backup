@@ -1,0 +1,25 @@
+#!/bin/bash
+# gpg-backup: Export GPG keys and trust info for yadm encryption
+
+BACKUP_DIR="$HOME/.gpg-backups"
+
+# Create backup directory
+mkdir -p "$BACKUP_DIR"
+
+# Export keys
+echo "Exporting GPG keys to $BACKUP_DIR..."
+gpg --export --armor > "$BACKUP_DIR/public.asc"
+gpg --export-secret-keys --armor > "$BACKUP_DIR/secrets.asc"
+gpg --export-ownertrust > "$BACKUP_DIR/ownertrust.txt"
+
+# Secure permissions
+chmod 700 "$HOME/.config/yadm"
+chmod 700 "$BACKUP_DIR"
+chmod 600 "$BACKUP_DIR"/*
+
+echo "Backup complete."
+echo "Add the following to .yadm/encrypt if not already present:"
+echo "  .gpg-backups/public.asc"
+echo "  .gpg-backups/secrets.asc"
+echo "  .gpg-backups/ownertrust.txt"
+
