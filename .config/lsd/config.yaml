@@ -44,7 +44,7 @@ ignore-globs:
 
 indicators: true
 
-layout: grid        # grid | tree | oneline
+layout: oneline        # grid | tree | oneline
 
 recursion:
   enabled: false
@@ -63,4 +63,4 @@ no-symlink: false
 total-size: false
 hyperlink: auto      # always | auto | never
 symlink-arrow: " ➔ "
-header: true
+header: false

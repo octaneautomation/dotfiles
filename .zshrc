@@ -1,1 +1,1 @@
-/root/.config/zsh/zshrc
+/root/.config/zsh/.zshrc
