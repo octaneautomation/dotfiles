@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Clean modular YADM bootstrap driver
 
 set -e
@@ -74,7 +74,7 @@ log "Verbose mode: $VERBOSE"
 for script in $(find -L "$BOOTSTRAP_D" -type f ! -name '*##*' ! -name '*~' | sort); do
     [ -x "$script" ] || continue
     log_section "Running: $script"
-    if ! "$script"; then
+    if ! . "$script"; then
         printf "%bError:%b bootstrap '%s' failed\n" "$Red" "$Color_Off" "$script" >&2
         exit 1
     fi

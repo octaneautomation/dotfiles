@@ -1,4 +1,11 @@
 # ~/.config/zsh/path.zsh
+# ------------------------------------------------------------
+# File: path.zsh
+# Purpose: Configure and customize PATH for Zsh
+# Details:
+#   - Prepends user-specific and common directories to PATH
+#   - Conditionally includes Linuxbrew binaries if installed
+# ------------------------------------------------------------
 
 # Prepend custom paths
 path=(
@@ -7,4 +14,10 @@ path=(
     $path
 )
 
+# Add Linuxbrew bin if it exists
+if [[ -d "/home/linuxbrew/.linuxbrew/bin" ]]; then
+    path=("/home/linuxbrew/.linuxbrew/bin" $path)
+fi
+
 export PATH
+
