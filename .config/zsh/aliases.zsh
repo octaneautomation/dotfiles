@@ -175,6 +175,13 @@ ysync() {
 }
 alias ysync="ysync"
 
+# yadm
+function yadm_lazygit() {
+    cd ~
+    yadm enter lazygit
+    cd -
+}
+alias ylaz="yadm_lazygit"
 # -----------------------------------------------------------------------------
 # 8. Git productivity
 # -----------------------------------------------------------------------------

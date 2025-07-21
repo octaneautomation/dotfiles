@@ -3,26 +3,27 @@
 
 set -e
 
-GIT_HOST="github.com"
-GIT_USER="octaneautomation"
-GIT_REPO="dotfiles"
-GIT_URL="https://${git_host}/${git_user}/"
+# Git repository configuration
+export GIT_HOST="github.com"
+export GIT_USER="octaneautomation"
+export GIT_REPO="dotfiles"
+export GIT_URL="https://${GIT_HOST}/${GIT_USER}/${GIT_REPO}.git"
 
-# Variables for temporary files/directories.
+# Variables for temporary files/directories
 TEMP_FILE="$(mktemp -u)"
 TEMP_DIR="$(mktemp -d)"
 
-# Set XDG directories.
+# Set XDG directories
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_DATA_HOME="${HOME}/.local/share"
 
-# Set Zsh configuration directory.
+# Set Zsh configuration directory
 export ZDOTDIR="${HOME}/.config/zsh"
-# Set Vim configuration directory.
+# Set Vim configuration directory
 export VIMINIT=":source $XDG_CONFIG_HOME/vim/vimrc"
 
-# Set user bin directory.
+# Set user bin directory
 export USER_BIN_DIR="${HOME}/.local/bin"
 
 BOOTSTRAP_D="$(dirname "$0")/bootstrap.d"
@@ -60,6 +61,17 @@ strip_colors() { printf '%s\n' "$@" | sed 's/\x1B\[[0-9;]*[A-Za-z]//g'; }
 log() { printf "%b\n" "$@"; strip_colors "$@" >> "$LOG_FILE"; }
 log_section() { printf "%b%s%b\n" "$Cyan" "$@" "$Color_Off"; strip_colors "$@" >> "$LOG_FILE"; }
 
+# Function to run a command with DRY_RUN/VERBOSE support
+run_cmd() {
+    local cmd="$*"
+    if [ "$DRY_RUN" -eq 1 ]; then
+        log "[DRY-RUN] $cmd"
+    else
+        [ "$VERBOSE" -eq 1 ] && log "[RUN] $cmd"
+        eval "$cmd"
+    fi
+}
+
 # Start
 log_section "------------------------------------"
 log_section "- YADM Bootstrap Driver            -"
@@ -68,13 +80,27 @@ log "Log file: $LOG_FILE"
 log "Dry-run mode: $DRY_RUN"
 log "Verbose mode: $VERBOSE"
 
-[ -d "$BOOTSTRAP_D" ] || { printf "Error: %s not found\n" "$BOOTSTRAP_D"; exit 1; }
+[ -d "$BOOTSTRAP_D" ] || { printf "%bError:%b %s not found\n" "$Red" "$Color_Off" "$BOOTSTRAP_D"; exit 1; }
+
+# Apply YADM alternates
+log_section "Applying YADM alternates"
+if ! run_cmd "yadm alt"; then
+    printf "%bError:%b yadm alt failed\n" "$Red" "$Color_Off" >&2
+    exit 1
+fi
+
+# Decrypt YADM files
+log_section "Decrypting YADM files"
+if ! run_cmd "yadm decrypt"; then
+    printf "%bError:%b yadm decrypt failed\n" "$Red" "$Color_Off" >&2
+    exit 1
+fi
 
 # Execute scripts in sorted order
 for script in $(find -L "$BOOTSTRAP_D" -type f ! -name '*##*' ! -name '*~' | sort); do
     [ -x "$script" ] || continue
     log_section "Running: $script"
-    if ! . "$script"; then
+    if ! run_cmd ". \"$script\""; then
         printf "%bError:%b bootstrap '%s' failed\n" "$Red" "$Color_Off" "$script" >&2
         exit 1
     fi
