@@ -1,79 +1,94 @@
 # YADM Dotfiles Bootstrap
 
-This repository contains a modular script for bootstrapping your system configuration using [YADM](https://yadm.io/) (Yet Another Dotfiles Manager). The scripts are designed to apply various configurations, install necessary packages, and set up your environment efficiently.
-
-## Main Features
-
-- **Modular Scripts**: Individual scripts handle different tasks, such as installing packages, configuring applications, or restoring GPG keys.
-- **Dry Run Mode**: Execute the bootstrap without making changes to preview what actions will be taken.
-- **Verbose Mode**: Provides detailed logs of each step being executed for easier troubleshooting.
-- **Colorful Logging**: Enhanced readability of logs through color-coded output.
-
-## Prerequisites
-
-Ensure that you have `yadm` installed to manage your dotfiles. You can install it following the instructions on the [YADM installation page](https://yadm.io/#installation).
-
-## Installation Instructions
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/octaneautomation/dotfiles.git
-cd dotfiles
-```
-
-### Step 2: Set Up YADM
-
-Set up your YADM repository and initialize it:
-
-```bash
-yadm init
-```
-
-Now add the cloned dotfiles as the remote:
-
-```bash
-yadm remote add origin https://github.com/octaneautomation/dotfiles.git
-```
-
-### Step 3: Run the Bootstrap Script
-
-You can run the bootstrap script to set up your environment. The script will create symlinks for your configuration files, install necessary software, and apply other configurations.
-
-```bash
-./bootstrap.sh
-```
-
-- **Options**:
-  - `--dry-run`: Run the script in dry-run mode to see what actions will be taken without making changes.
-  - `--verbose`: Enable verbose logging for detailed output.
-
-### Step 4: Verify Configuration
-
-After running the script, verify that your preferred applications and settings are configured as expected. Check the log file located at `~/$HOME/yadm_bootstrap.log` for any errors or important messages.
-
-## Customization
-
-The default environment variables can be modified in the script:
-
-- `GIT_HOST`, `GIT_USER`, and `GIT_REPO`: Change these values to point to your own dotfiles repository if different.
-
-## Available Modules
-
-1. **Package installation** (`20-packages.sh`): Installs required software on Linux and macOS.
-2. **GPG Setup** (`40-gpg.sh`): Restores GPG keys from backup if available.
-3. **iTerm2 Configuration** (`45-iterm2.sh`): Configures iTerm2 preferences on macOS.
-4. **YADM Remote Setup** (`46-yadm-remote.sh`): Updates the YADM remote repository information.
-
-## Troubleshooting
-
-- If you encounter any issues, check the log file specified in the bootstrap script for details on what may have gone wrong.
-- Ensure that any required applications or services (like Git, Homebrew, etc.) are installed and available in your `PATH`.
-
-For further assistance, please consult the [YADM documentation](https://yadm.io/) or raise an issue in this repository.
+This repository contains a modular setup for managing and bootstrapping your system configuration using **[YADM](https://yadm.io/)** (Yet Another Dotfiles Manager). It automates applying configurations, installing packages, and setting up your environment efficiently.
 
 ---
 
-This bootstrap kit aims to simplify your setup by automating the configuration of dotfiles and essential applications tailored to your needs. Happy dotfiling!
+## ✅ Features
 
+- **Modular Scripts** – Separate scripts for tasks like installing packages, configuring apps, and restoring GPG keys.
+- **Dry Run Mode** – Preview what actions will be taken without applying changes.
+- **Verbose Mode** – Detailed logs for easier troubleshooting.
+- **Color-Coded Output** – Readable logs with color.
+
+---
+
+## 🔍 Prerequisites
+
+- **Install YADM**  
+  Follow the [YADM installation instructions](https://yadm.io/docs/install) for your OS.
+- Ensure **Git** is installed and available in your `PATH`.
+
+---
+
+## 🚀 Installation
+
+Clone your dotfiles with YADM:
+
+```bash
+yadm clone https://github.com/octaneautomation/dotfiles.git
+```
+
+### What happens next?
+
+- YADM initializes and sets up your dotfiles
+- If the repository includes a `.yadm/bootstrap` script, it will **run automatically**
+- This script can install packages, configure apps, and apply system tweaks
+
+---
+
+## ▶ Re-running the Bootstrap
+
+If you want to manually re-run the bootstrap after cloning:
+
+```bash
+yadm bootstrap
+```
+
+You can pass arguments to it as needed (e.g., `--dry-run` or `--verbose` if supported by your script).
+
+---
+
+## 🛠 Customization
+
+Environment variables you can adjust inside the bootstrap:
+
+- **`GIT_HOST`**, **`GIT_USER`**, **`GIT_REPO`**  
+  Change these if you use a custom dotfiles repository.
+
+---
+
+## 📦 Available Modules
+
+- **20-packages.sh** – Installs required packages (Linux/macOS)
+- **40-gpg.sh** – Restores GPG keys from backup if available
+- **45-iterm2.sh** – Configures iTerm2 on macOS
+- **46-yadm-remote.sh** – Updates YADM remote repository info
+
+---
+
+## ✅ Verification
+
+After running the bootstrap, check:
+
+- Your apps and settings are as expected
+- Logs in `~/yadm_bootstrap.log` for any errors or warnings
+
+---
+
+## ❓ Troubleshooting
+
+- Ensure required tools (Git, Homebrew, etc.) are installed and in your `PATH`
+- Check the log file for error details
+- Consult the [YADM Documentation](https://yadm.io/docs)
+
+---
+
+### 💡 Why YADM?
+
+YADM is a lightweight yet powerful dotfiles manager, making it easy to maintain a single repository for all your configurations across multiple systems.
+
+---
+
+**Happy dotfiling!** 🎉
 
