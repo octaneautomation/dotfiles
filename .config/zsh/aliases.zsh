@@ -129,7 +129,9 @@ fi
 # 6. System utilities
 # -----------------------------------------------------------------------------
 alias myip="curl -s http://ipecho.net/plain; echo"
-alias zshrc="$EDITOR $ZDOTDIR/.zshrc"
+alias zshrc="cd $ZDOTDIR && ls"
+alias yadm-config="cd $HOME/.config/yadm && ls && ls .bootstrap.d"
+alias edit-aliases="$EDITOR ~/.config/zsh/aliases.zsh"
 alias vimrc="$EDITOR ~/.config/vim/vimrc"
 
 if command_exists python3; then
