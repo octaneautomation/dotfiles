@@ -42,6 +42,8 @@
     lg = log --oneline --graph --decorate --all
     amend = commit --amend --no-edit
     unstage = reset HEAD --
+    ls = ls-files
+    llm = "!git-llm-commit"
 
 [pull]
     rebase = true

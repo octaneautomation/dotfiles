@@ -1,16 +1,57 @@
 #!/usr/bin/env bash
 #
-# git-llm-commit: Generate and confirm commit message using LLM
+# git-llm-commit: Commit staged or interactive changes with LLM-generated message
 #
 # Usage:
-#   git-llm-commit [<file>]
+#   git-llm-commit [options] [file]
 #
-# - If <file> is provided, restrict commit to that file.
-# - Uses LLM to generate commit message based on diff.
-# - Checks for unstaged changes and offers to add them before committing.
+# Options:
+#   --interactive    Stage changes interactively (like git add -p)
+#   --dry-run        Show generated commit message but do not commit
+#   --prompt FILE    Use custom LLM prompt file (default: ~/.config/prompts/commit-system-prompt.txt)
+#
+# Examples:
+#   git-llm-commit             # Auto-stage all changes if needed
+#   git-llm-commit --interactive # Select hunks interactively, then commit
+#   git-llm-commit README.md   # Commit only README.md changes
+#   git-llm-commit --dry-run   # Preview commit message without committing
 #
 
+# Command				Action
+# git llm				Auto-stage changes if needed, generate message, confirm commit
+# git llm README.md			Commit only changes to README.md
+# git llm --interactive			Interactive hunk staging, then LLM commit
+# git llm --dry-run			Preview message without committing
+# git llm --prompt ~/.local/custom.txt	Use custom LLM prompt
+
+set -e
+
 PROMPT_FILE="${HOME}/.local/prompts/commit-system-prompt.txt"
+INTERACTIVE=false
+DRY_RUN=false
+TARGET_FILE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --interactive)
+            INTERACTIVE=true
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --prompt)
+            PROMPT_FILE="$2"
+            shift 2
+            ;;
+        *)
+            TARGET_FILE="$1"
+            shift
+            ;;
+    esac
+done
 
 # Check if in a Git repo
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
@@ -18,43 +59,39 @@ if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     exit 1
 fi
 
-TARGET_FILE="$1"
-
-# Detect unstaged changes for the target file or whole repo
-if [ -n "$TARGET_FILE" ]; then
-    unstaged_changes=$(git diff --name-only "$TARGET_FILE")
-else
-    unstaged_changes=$(git diff --name-only)
+# Validate prompt file
+if [ ! -f "$PROMPT_FILE" ]; then
+    echo "Error: Prompt file not found at $PROMPT_FILE"
+    exit 1
 fi
 
-# Detect staged changes
-if [ -n "$TARGET_FILE" ]; then
-    staged_changes=$(git diff --cached --name-only "$TARGET_FILE")
+# Stage changes if needed
+if $INTERACTIVE; then
+    git add -p
 else
-    staged_changes=$(git diff --cached --name-only)
-fi
-
-# Handle unstaged changes
-if [ -n "$unstaged_changes" ]; then
-    echo "There are unstaged changes:"
-    echo "$unstaged_changes"
-    read -p "Do you want to stage these changes? [y/N] " confirm
-    if echo "$confirm" | grep -qi '^y$'; then
-        if [ -n "$TARGET_FILE" ]; then
-            git add "$TARGET_FILE"
+    # Detect unstaged changes
+    unstaged=$(git diff --name-only ${TARGET_FILE:+$TARGET_FILE})
+    if [ -n "$unstaged" ]; then
+        echo "Unstaged changes detected:"
+        echo "$unstaged"
+        read -p "Do you want to stage these changes? [y/N] " confirm
+        if echo "$confirm" | grep -qi '^y$'; then
+            if [ -n "$TARGET_FILE" ]; then
+                git add "$TARGET_FILE"
+            else
+                git add -A
+            fi
+            echo "Changes staged."
         else
-            git add -A
+            echo "Leaving unstaged changes as is."
         fi
-        echo "Changes staged."
-        staged_changes=$(git diff --cached --name-only "$TARGET_FILE")
-    else
-        echo "Unstaged changes left untouched."
     fi
 fi
 
-# If still no staged changes, abort
-if [ -z "$staged_changes" ]; then
-    echo "No changes staged for commit. Aborting."
+# Check staged changes
+staged=$(git diff --cached --name-only ${TARGET_FILE:+$TARGET_FILE})
+if [ -z "$staged" ]; then
+    echo "No staged changes to commit. Aborting."
     exit 0
 fi
 
@@ -63,16 +100,28 @@ echo "Generating commit message using LLM..."
 diff_content=$(git diff --cached ${TARGET_FILE:+$TARGET_FILE})
 commit_msg=$(echo "$diff_content" | llm -s "$(cat "$PROMPT_FILE")")
 
-# Show commit message and confirm
+# Show proposed message
 echo -e "\nProposed commit message:\n----------------------------------------"
 echo "$commit_msg"
 echo "----------------------------------------"
+
+if $DRY_RUN; then
+    echo "Dry run enabled. No commit will be made."
+    exit 0
+fi
+
+# Confirm commit
 read -p "Do you want to commit with this message? [y/N] " confirm
 if echo "$confirm" | grep -qi '^y$'; then
     git commit -m "$commit_msg" ${TARGET_FILE:+$TARGET_FILE}
-    echo "Commit created successfully."
+    echo "✅ Commit created successfully."
 else
     echo "Commit aborted."
+    read -p "Do you want to unstage the changes? [y/N] " unstage
+    if echo "$unstage" | grep -qi '^y$'; then
+        git reset
+        echo "Staged changes have been reset."
+    fi
     exit 0
 fi
 
