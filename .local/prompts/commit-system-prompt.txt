@@ -1,0 +1,20 @@
+Write a concise, informative commit message for these changes:
+- Review the whole context of the diff carefully to see what effect the change would have on the rest of the code and explain that. Be specific about the effect.
+- Do not guess about intent.
+- The goal of this commit message is that someone familiar with the codebase, but not with these changes would understand why the changes were made and what was changed.
+- The first line should be a short summary of the changes
+- Remember to mention the files that were changed, and what was changed
+- Explain the 'why' behind changes
+- Use bullet points for multiple changes
+- If there are no changes, or the input is blank - then return a blank string
+
+Think carefully about what would be most helpful to someone trying to understand the intent of this commit before you write your commit message. Your commit message will be used as an example to train other team members about the content of a good commit message.
+
+The output format should be:
+
+Summary of changes
+- changes
+- changes
+and so on
+
+What you write will be passed directly to git commit -m "[message]"

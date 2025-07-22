@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# git-llm-commit: Generate and confirm commit message using LLM
+#
+# Usage:
+#   git-llm-commit [<file>]
+#
+# - If <file> is provided, restrict commit to that file.
+# - Uses LLM to generate commit message based on diff.
+# - Checks for unstaged changes and offers to add them before committing.
+#
+
+PROMPT_FILE="${HOME}/.local/prompts/commit-system-prompt.txt"
+
+# Check if in a Git repo
+if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo "Error: Not inside a Git repository."
+    exit 1
+fi
+
+TARGET_FILE="$1"
+
+# Detect unstaged changes for the target file or whole repo
+if [ -n "$TARGET_FILE" ]; then
+    unstaged_changes=$(git diff --name-only "$TARGET_FILE")
+else
+    unstaged_changes=$(git diff --name-only)
+fi
+
+# Detect staged changes
+if [ -n "$TARGET_FILE" ]; then
+    staged_changes=$(git diff --cached --name-only "$TARGET_FILE")
+else
+    staged_changes=$(git diff --cached --name-only)
+fi
+
+# Handle unstaged changes
+if [ -n "$unstaged_changes" ]; then
+    echo "There are unstaged changes:"
+    echo "$unstaged_changes"
+    read -p "Do you want to stage these changes? [y/N] " confirm
+    if echo "$confirm" | grep -qi '^y$'; then
+        if [ -n "$TARGET_FILE" ]; then
+            git add "$TARGET_FILE"
+        else
+            git add -A
+        fi
+        echo "Changes staged."
+        staged_changes=$(git diff --cached --name-only "$TARGET_FILE")
+    else
+        echo "Unstaged changes left untouched."
+    fi
+fi
+
+# If still no staged changes, abort
+if [ -z "$staged_changes" ]; then
+    echo "No changes staged for commit. Aborting."
+    exit 0
+fi
+
+# Generate commit message
+echo "Generating commit message using LLM..."
+diff_content=$(git diff --cached ${TARGET_FILE:+$TARGET_FILE})
+commit_msg=$(echo "$diff_content" | llm -s "$(cat "$PROMPT_FILE")")
+
+# Show commit message and confirm
+echo -e "\nProposed commit message:\n----------------------------------------"
+echo "$commit_msg"
+echo "----------------------------------------"
+read -p "Do you want to commit with this message? [y/N] " confirm
+if echo "$confirm" | grep -qi '^y$'; then
+    git commit -m "$commit_msg" ${TARGET_FILE:+$TARGET_FILE}
+    echo "Commit created successfully."
+else
+    echo "Commit aborted."
+    exit 0
+fi
+
