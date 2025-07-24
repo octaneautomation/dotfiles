@@ -7,6 +7,8 @@
 #   - Conditionally includes Linuxbrew binaries if installed
 # ------------------------------------------------------------
 
+export DOCKER_HOST=unix:///run/docker.sock
+
 # Prepend custom paths
 path=(
     "$HOME/.local/bin"
