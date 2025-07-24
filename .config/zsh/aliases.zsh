@@ -409,3 +409,51 @@ alias scfzr='scfz_restart'
 alias scfzs='scfz_start'
 alias scfzp='scfz_stop'
 alias scfzl='scfz_logs'
+
+# Use systemctl completion for sc aliases
+compdef sc='systemctl'
+compdef scs='systemctl'
+compdef scr='systemctl'
+compdef scstart='systemctl'
+compdef scstop='systemctl'
+compdef sce='systemctl'
+compdef scd='systemctl'
+
+# -----------------------------------------------------------------------------
+# fzf Tab Completion for systemctl Aliases (scr, scstart, scstop, scs)
+# -----------------------------------------------------------------------------
+_fzf_systemd_services() {
+  # Get the current command
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  # Fetch list of available services
+  local services
+  services=($(systemctl list-unit-files --type=service --no-legend | awk '{print $1}'))
+
+  # Launch fzf if Tab is pressed
+  local selected
+  selected=$(printf '%s\n' "${services[@]}" | fzf --prompt="Select systemd service: " --height 40% --reverse)
+
+  if [[ -n "$selected" ]]; then
+    # Insert the selected service at the cursor
+    LBUFFER="$LBUFFER$selected"
+  fi
+
+  zle redisplay
+}
+
+# Create ZLE widget for this completion
+zle -N fzf-systemd-complete _fzf_systemd_services
+
+# Bind Tab for specific aliases
+bindkey -M emacs '^I' expand-or-complete   # Ensure Tab works normally by default
+
+# Use zstyle to override completion for certain commands
+autoload -Uz compinit
+compinit
+zstyle ':completion:*:*:scr:*' completer _fzf_systemd_services
+zstyle ':completion:*:*:scstart:*' completer _fzf_systemd_services
+zstyle ':completion:*:*:scstop:*' completer _fzf_systemd_services
+zstyle ':completion:*:*:scs:*' completer _fzf_systemd_services
+
