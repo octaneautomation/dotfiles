@@ -111,19 +111,19 @@ help-aliases() {
     echo
 
     echo -e "${Cyan}=== Helpers ===${Color_Off}"
-    echo -e "  ${Green}mkcd${Color_Off}   → Create directory and cd"
-    echo -e "  ${Green}rmdir${Color_Off}  → Remove directory (with confirmation)"
-    echo -e "  ${Green}fkill${Color_Off}  → fzf: Kill selected process"
+    echo -e "  ${Green}mkcd${Color_Off}             → Create directory and cd"
+    echo -e "  ${Green}rmdir${Color_Off}            → Remove directory (with confirmation)"
+    echo -e "  ${Green}fkill${Color_Off}            → fzf: Kill selected process"
     echo
 
     echo -e "${Cyan}=== Clipboard ===${Color_Off}"
-    echo -e "  ${Green}fh${Color_Off}     → fzf: Search history & copy to clipboard"
+    echo -e "  ${Green}fh${Color_Off}               → fzf: Search history & copy to clipboard"
     echo
 
     echo -e "${Cyan}=== fzf Navigation ===${Color_Off}"
-    echo -e "  ${Green}fcd${Color_Off}    → fzf: cd into directory"
-    echo -e "  ${Green}fo${Color_Off}     → fzf: Open file in \$EDITOR"
-    echo -e "  ${Green}fgb${Color_Off}    → fzf: Git branch checkout"
+    echo -e "  ${Green}fcd${Color_Off}              → fzf: cd into directory"
+    echo -e "  ${Green}fo${Color_Off}               → fzf: Open file in \$EDITOR"
+    echo -e "  ${Green}fgb${Color_Off}              → fzf: Git branch checkout"
     echo
 
     echo -e "${Cyan}=== System Maintenance ===${Color_Off}"
@@ -134,30 +134,30 @@ help-aliases() {
     echo
 
     echo -e "${Cyan}=== Systemd Shortcuts ===${Color_Off}"
-    echo -e "  ${Green}sc${Color_Off}              → sudo systemctl"
-    echo -e "  ${Green}scu${Color_Off}             → systemctl --user"
-    echo -e "  ${Green}sce${Color_Off}             → Enable a service"
-    echo -e "  ${Green}scd${Color_Off}             → Disable a service"
-    echo -e "  ${Green}scr${Color_Off}             → Restart a service"
-    echo -e "  ${Green}scs${Color_Off}             → Show service status"
-    echo -e "  ${Green}scstart${Color_Off}         → Start a service"
-    echo -e "  ${Green}scstop${Color_Off}          → Stop a service"
-    echo -e "  ${Green}scl${Color_Off}             → List active services"
-    echo -e "  ${Green}scj${Color_Off}             → List systemd jobs"
-    echo -e "  ${Green}sclo${Color_Off}           → List timers"
-    echo -e "  ${Green}jctl${Color_Off}            → journalctl (errors)"
-    echo -e "  ${Green}jctlf${Color_Off}           → Follow logs (journalctl -f)"
-    echo -e "  ${Green}jctlu${Color_Off}           → User logs"
+    echo -e "  ${Green}sc${Color_Off}               → sudo systemctl"
+    echo -e "  ${Green}scu${Color_Off}              → systemctl --user"
+    echo -e "  ${Green}sce${Color_Off}              → Enable a service"
+    echo -e "  ${Green}scd${Color_Off}              → Disable a service"
+    echo -e "  ${Green}scr${Color_Off}              → Restart a service"
+    echo -e "  ${Green}scs${Color_Off}              → Show service status"
+    echo -e "  ${Green}scstart${Color_Off}          → Start a service"
+    echo -e "  ${Green}scstop${Color_Off}           → Stop a service"
+    echo -e "  ${Green}scl${Color_Off}              → List active services"
+    echo -e "  ${Green}scj${Color_Off}              → List systemd jobs"
+    echo -e "  ${Green}sclo${Color_Off}             → List timers"
+    echo -e "  ${Green}jctl${Color_Off}             → journalctl (errors)"
+    echo -e "  ${Green}jctlf${Color_Off}            → Follow logs (journalctl -f)"
+    echo -e "  ${Green}jctlu${Color_Off}            → User logs"
     echo
 
     echo -e "${Cyan}=== Systemd (fzf Helpers) ===${Color_Off}"
-    echo -e "  ${Green}scfzr${Color_Off}           → fzf: Restart a service"
-    echo -e "  ${Green}scfzs${Color_Off}           → fzf: Start a service"
-    echo -e "  ${Green}scfzp${Color_Off}           → fzf: Stop a running service"
-    echo -e "  ${Green}scfzl${Color_Off}           → fzf: View live logs for a service"
+    echo -e "  ${Green}scfzr${Color_Off}            → fzf: Restart a service"
+    echo -e "  ${Green}scfzs${Color_Off}            → fzf: Start a service"
+    echo -e "  ${Green}scfzp${Color_Off}            → fzf: Stop a running service"
+    echo -e "  ${Green}scfzl${Color_Off}            → fzf: View live logs for a service"
     echo
 }
-alias help-aliases='help-aliases'
+alias help-aliases='help-aliases | less -R'
 alias hal='help-aliases'
 
 # -----------------------------------------------------------------------------
