@@ -1,4 +1,5 @@
 # ~/.config/zsh/aliases.zsh
+# ~/.config/zsh/aliases.zsh
 # =============================================================================
 # Zsh Aliases & Helpers
 # -----------------------------------------------------------------------------
@@ -9,9 +10,15 @@
 #     ✔ Dotfiles (yadm) management
 #     ✔ Git productivity helpers
 #     ✔ Cross-platform enhancements
+#     ✔ System maintenance commands (APT, Homebrew)
+#     ✔ Systemd shortcuts with interactive controls
 #
 # -----------------------------------------------------------------------------
 # AVAILABLE ALIASES & FUNCTIONS:
+#
+# [ Help ]
+#   help-aliases → Show all aliases/functions (colorized)
+#   hal          → Shortcut for help-aliases
 #
 # [ Directory Listings ]
 #   ls, ll, la, l
@@ -44,11 +51,114 @@
 # [ Helpers ]
 #   mkcd, rmdir, fkill
 #
-# [ Help ]
-#   help-aliases → Show all aliases/functions (colorized)
-#   hal-fzf      → Interactive fuzzy help
+# [ System Maintenance ]
+#   apt-update, apt-full-update, brew-update, sys-update
+#
+# [ Systemd Shortcuts ]
+#   sc, scu, sce, scd, scr, scs, scstart, scstop, scl, scj, sclo, jctl, jctlf, jctlu
+#
+# [ Systemd fzf Helpers ]
+#   scfzr, scfzs, scfzp, scfzl
 #
 # -----------------------------------------------------------------------------
+
+help-aliases() {
+    : "${Blue:='\033[0;34m'}"
+    : "${Green:='\033[0;32m'}"
+    : "${Cyan:='\033[0;36m'}"
+    : "${Color_Off:='\033[0m'}"
+
+    echo -e "${Blue}📜 Available Aliases & Functions:${Color_Off}\n"
+
+    echo -e "${Cyan}=== Directory Listings ===${Color_Off}"
+    echo -e "  ${Green}ls${Color_Off}, ${Green}ll${Color_Off}, ${Green}la${Color_Off}, ${Green}l${Color_Off} → Various ls styles"
+    echo
+
+    echo -e "${Cyan}=== Editors ===${Color_Off}"
+    echo -e "  ${Green}vim, vi, nano${Color_Off} → Open preferred editor (\$EDITOR)"
+    echo
+
+    echo -e "${Cyan}=== File Viewing ===${Color_Off}"
+    echo -e "  ${Green}cat${Color_Off}    → Syntax-highlighted (bat if installed)"
+    echo -e "  ${Green}catr${Color_Off}   → Raw output (no paging, no colors)"
+    echo
+
+    echo -e "${Cyan}=== Zsh Reload ===${Color_Off}"
+    echo -e "  ${Green}reload-zsh${Color_Off} → Restart Zsh session"
+    echo
+
+    echo -e "${Cyan}=== Search Helpers ===${Color_Off}"
+    echo -e "  ${Green}fd${Color_Off}, ${Green}ff${Color_Off} → Find directories/files"
+    echo -e "  ${Green}fdf${Color_Off}    → fzf: Open file in \$EDITOR (with preview)"
+    echo -e "  ${Green}fdd${Color_Off}    → fzf: cd into directory"
+    echo -e "  ${Green}ffo${Color_Off}    → fzf: Find any file/dir & open"
+    echo
+
+    echo -e "${Cyan}=== System Utilities ===${Color_Off}"
+    echo -e "  ${Green}myip${Color_Off}   → Show public IP address"
+    echo -e "  ${Green}httpserve${Color_Off} → Start Python HTTP server (port 2182)"
+    echo -e "  ${Green}df${Color_Off}, ${Green}duu${Color_Off} → Disk usage (duf/ncdu if installed)"
+    echo
+
+    echo -e "${Cyan}=== Dotfiles (yadm) ===${Color_Off}"
+    echo -e "  ${Green}yst${Color_Off}, ${Green}ya${Color_Off}, ${Green}yd${Color_Off}, ${Green}yds${Color_Off}, ${Green}yc${Color_Off}, ${Green}yp${Color_Off}"
+    echo -e "  ${Green}ysync${Color_Off}  → Interactive commit & push"
+    echo
+
+    echo -e "${Cyan}=== Git Productivity ===${Color_Off}"
+    echo -e "  ${Green}gs${Color_Off}, ${Green}gl${Color_Off}, ${Green}gco${Color_Off}, ${Green}gp${Color_Off}, ${Green}gb${Color_Off}"
+    echo -e "  ${Green}ga${Color_Off}, ${Green}gc${Color_Off}, ${Green}gcm${Color_Off}, ${Green}gd${Color_Off}, ${Green}gds${Color_Off}"
+    echo
+
+    echo -e "${Cyan}=== Helpers ===${Color_Off}"
+    echo -e "  ${Green}mkcd${Color_Off}   → Create directory and cd"
+    echo -e "  ${Green}rmdir${Color_Off}  → Remove directory (with confirmation)"
+    echo -e "  ${Green}fkill${Color_Off}  → fzf: Kill selected process"
+    echo
+
+    echo -e "${Cyan}=== Clipboard ===${Color_Off}"
+    echo -e "  ${Green}fh${Color_Off}     → fzf: Search history & copy to clipboard"
+    echo
+
+    echo -e "${Cyan}=== fzf Navigation ===${Color_Off}"
+    echo -e "  ${Green}fcd${Color_Off}    → fzf: cd into directory"
+    echo -e "  ${Green}fo${Color_Off}     → fzf: Open file in \$EDITOR"
+    echo -e "  ${Green}fgb${Color_Off}    → fzf: Git branch checkout"
+    echo
+
+    echo -e "${Cyan}=== System Maintenance ===${Color_Off}"
+    echo -e "  ${Green}apt-update${Color_Off}       → APT: update, upgrade, autoremove, autoclean"
+    echo -e "  ${Green}apt-full-update${Color_Off}  → APT: full-upgrade (kernel too)"
+    echo -e "  ${Green}brew-update${Color_Off}      → Homebrew: update, upgrade, cleanup"
+    echo -e "  ${Green}sys-update${Color_Off}       → Combined APT + Homebrew updates (with prompt)"
+    echo
+
+    echo -e "${Cyan}=== Systemd Shortcuts ===${Color_Off}"
+    echo -e "  ${Green}sc${Color_Off}              → sudo systemctl"
+    echo -e "  ${Green}scu${Color_Off}             → systemctl --user"
+    echo -e "  ${Green}sce${Color_Off}             → Enable a service"
+    echo -e "  ${Green}scd${Color_Off}             → Disable a service"
+    echo -e "  ${Green}scr${Color_Off}             → Restart a service"
+    echo -e "  ${Green}scs${Color_Off}             → Show service status"
+    echo -e "  ${Green}scstart${Color_Off}         → Start a service"
+    echo -e "  ${Green}scstop${Color_Off}          → Stop a service"
+    echo -e "  ${Green}scl${Color_Off}             → List active services"
+    echo -e "  ${Green}scj${Color_Off}             → List systemd jobs"
+    echo -e "  ${Green}sclo${Color_Off}           → List timers"
+    echo -e "  ${Green}jctl${Color_Off}            → journalctl (errors)"
+    echo -e "  ${Green}jctlf${Color_Off}           → Follow logs (journalctl -f)"
+    echo -e "  ${Green}jctlu${Color_Off}           → User logs"
+    echo
+
+    echo -e "${Cyan}=== Systemd (fzf Helpers) ===${Color_Off}"
+    echo -e "  ${Green}scfzr${Color_Off}           → fzf: Restart a service"
+    echo -e "  ${Green}scfzs${Color_Off}           → fzf: Start a service"
+    echo -e "  ${Green}scfzp${Color_Off}           → fzf: Stop a running service"
+    echo -e "  ${Green}scfzl${Color_Off}           → fzf: View live logs for a service"
+    echo
+}
+alias help-aliases='help-aliases'
+alias hal='help-aliases'
 
 # -----------------------------------------------------------------------------
 # Utility: Check if a command exists
@@ -184,6 +294,7 @@ function yadm_lazygit() {
     cd -
 }
 alias ylaz="yadm_lazygit"
+
 # -----------------------------------------------------------------------------
 # 8. Git productivity
 # -----------------------------------------------------------------------------
@@ -222,91 +333,79 @@ alias fo='${EDITOR:-vim} "$(fzf)"'
 alias fgb='git branch | fzf | xargs git checkout'
 
 # -----------------------------------------------------------------------------
-# 12. Help system
+# 12. System Maintenance (APT + Brew)
 # -----------------------------------------------------------------------------
-help-aliases() {
-: "${Blue:='\033[0;34m'}"
-    : "${Green:='\033[0;32m'}"
-    : "${Cyan:='\033[0;36m'}"
-    : "${Yellow:='\033[0;33m'}"
-    : "${Color_Off:='\033[0m'}"
+alias apt-update='sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove && sudo apt -y autoclean'
+alias apt-full-update='sudo apt update && sudo apt -y full-upgrade && sudo apt -y autoremove && sudo apt -y autoclean'
+alias brew-update='brew update && brew upgrade && brew cleanup'
 
-    echo -e "${Blue}📜 Available Aliases & Functions:${Color_Off}\n"
-
-    echo -e "${Cyan}=== Directory Listings ===${Color_Off}"
-    echo -e "  ${Green}ls${Color_Off}    → List files (colorized, long format)"
-    echo -e "  ${Green}ll${Color_Off}    → Long list including hidden files"
-    echo -e "  ${Green}la${Color_Off}    → Long list excluding '.' and '..'"
-    echo -e "  ${Green}l${Color_Off}     → Compact columns"
+sys-update() {
+    echo "🔄 System update in progress..."
+    echo "This will run:"
+    echo "  - APT update, upgrade, autoremove, autoclean (if available)"
+    echo "  - Homebrew update, upgrade, cleanup (if available)"
     echo
+    read "?Proceed? (y/N): " confirm
+    [[ "$confirm" =~ ^[Yy]$ ]] || { echo "❌ Canceled."; return 1; }
 
-    echo -e "${Cyan}=== Editors ===${Color_Off}"
-    echo -e "  ${Green}vim, vi, nano${Color_Off} → Open preferred editor (\$EDITOR)"
-    echo
-
-    echo -e "${Cyan}=== File Viewing ===${Color_Off}"
-    echo -e "  ${Green}cat${Color_Off}    → Syntax-highlighted (bat if installed)"
-    echo -e "  ${Green}catr${Color_Off}   → Raw output (no paging, no colors)"
-    echo
-
-    echo -e "${Cyan}=== Zsh Reload ===${Color_Off}"
-    echo -e "  ${Green}reload-zsh${Color_Off} → Restart Zsh session"
-    echo
-
-    echo -e "${Cyan}=== Search Helpers ===${Color_Off}"
-    echo -e "  ${Green}fd${Color_Off}     → Find directories (fd/find)"
-    echo -e "  ${Green}ff${Color_Off}     → Find files"
-    echo -e "  ${Green}fdf${Color_Off}    → fzf: Fuzzy find file & open in \$EDITOR"
-    echo -e "  ${Green}fdd${Color_Off}    → fzf: Fuzzy find directory & cd"
-    echo -e "  ${Green}ffo${Color_Off}    → fzf: Fuzzy find any file/dir & open"
-    echo
-
-    echo -e "${Cyan}=== System Utilities ===${Color_Off}"
-    echo -e "  ${Green}myip${Color_Off}   → Show public IP address"
-    echo -e "  ${Green}httpserve${Color_Off} → Start Python HTTP server (port 2182)"
-    echo -e "  ${Green}df${Color_Off}     → Disk usage (duf if installed)"
-    echo -e "  ${Green}duu${Color_Off}    → Disk usage (ncdu if installed)"
-    echo
-
-    echo -e "${Cyan}=== Dotfiles (yadm) ===${Color_Off}"
-    echo -e "  ${Green}yst${Color_Off}    → yadm status"
-    echo -e "  ${Green}ya${Color_Off}     → yadm add"
-    echo -e "  ${Green}yd${Color_Off}     → yadm diff"
-    echo -e "  ${Green}yds${Color_Off}    → yadm diff staged"
-    echo -e "  ${Green}yc${Color_Off}     → yadm commit"
-    echo -e "  ${Green}yp${Color_Off}     → yadm push"
-    echo -e "  ${Green}ysync${Color_Off}  → Interactive yadm sync (status → commit → push)"
-    echo
-
-    echo -e "${Cyan}=== Git Productivity ===${Color_Off}"
-    echo -e "  ${Green}gs${Color_Off}     → git status (short)"
-    echo -e "  ${Green}gl${Color_Off}     → git log (graph)"
-    echo -e "  ${Green}gco${Color_Off}    → git checkout"
-    echo -e "  ${Green}gp${Color_Off}     → git pull --rebase"
-    echo -e "  ${Green}gb${Color_Off}     → git branch"
-    echo -e "  ${Green}ga${Color_Off}     → git add"
-    echo -e "  ${Green}gc${Color_Off}     → git commit"
-    echo -e "  ${Green}gcm${Color_Off}    → git commit -m"
-    echo -e "  ${Green}gd${Color_Off}     → git diff"
-    echo -e "  ${Green}gds${Color_Off}    → git diff staged"
-    echo
-
-    echo -e "${Cyan}=== Helpers ===${Color_Off}"
-    echo -e "  ${Green}mkcd${Color_Off}   → Create directory and cd"
-    echo -e "  ${Green}rmdir${Color_Off}  → Remove directory (confirmation)"
-    echo -e "  ${Green}fkill${Color_Off}  → fzf: Kill selected process"
-    echo
-
-    echo -e "${Cyan}=== Clipboard ===${Color_Off}"
-    echo -e "  ${Green}fh${Color_Off}     → fzf: Search history & copy to clipboard"
-    echo
-
-    echo -e "${Cyan}=== fzf Navigation ===${Color_Off}"
-    echo -e "  ${Green}fcd${Color_Off}    → fzf: cd into directory"
-    echo -e "  ${Green}fo${Color_Off}     → fzf: Open file in \$EDITOR"
-    echo -e "  ${Green}fgb${Color_Off}    → fzf: Git branch checkout"
-    echo
+    if command -v apt >/dev/null; then
+        echo "➡ APT maintenance..."
+        sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove && sudo apt -y autoclean
+    fi
+    if command -v brew >/dev/null; then
+        echo "➡ Brew maintenance..."
+        brew update && brew upgrade && brew cleanup
+    fi
+    echo "✅ All updates complete!"
 }
-alias help-aliases='help-aliases'
-alias hal='help-aliases'
+alias sys-update='sys-update'
 
+# -----------------------------------------------------------------------------
+# 13. Systemd Shortcuts
+# -----------------------------------------------------------------------------
+alias sc='sudo systemctl'
+alias scu='systemctl --user'
+alias sce='sc enable'
+alias scd='sc disable'
+alias scr='sc restart'
+alias scs='sc status'
+alias scstart='sc start'
+alias scstop='sc stop'
+alias scl='sc list-units --type=service'
+alias scj='sc list-jobs'
+alias sclo='sc list-timers'
+alias jctl='journalctl -xe'
+alias jctlf='journalctl -f'       # Follow logs (tail)
+alias jctlu='journalctl --user'   # User logs
+
+# -----------------------------------------------------------------------------
+# fzf-powered Systemd Helpers
+# -----------------------------------------------------------------------------
+scfz_restart() {
+    local service
+    service=$(sc list-units --type=service --no-legend --no-pager | awk '{print $1}' | fzf --prompt="Restart service: ")
+    [[ -n "$service" ]] && sc restart "$service" && echo "✅ Restarted $service"
+}
+
+scfz_start() {
+    local service
+    service=$(sc list-unit-files --type=service --no-legend | awk '{print $1}' | fzf --prompt="Start service: ")
+    [[ -n "$service" ]] && sc start "$service" && echo "✅ Started $service"
+}
+
+scfz_stop() {
+    local service
+    service=$(sc list-units --type=service --state=running --no-legend --no-pager | awk '{print $1}' | fzf --prompt="Stop service: ")
+    [[ -n "$service" ]] && sc stop "$service" && echo "✅ Stopped $service"
+}
+
+scfz_logs() {
+    local service
+    service=$(sc list-units --type=service --no-legend --no-pager | awk '{print $1}' | fzf --prompt="View logs for: ")
+    [[ -n "$service" ]] && journalctl -u "$service" -f
+}
+
+alias scfzr='scfz_restart'
+alias scfzs='scfz_start'
+alias scfzp='scfz_stop'
+alias scfzl='scfz_logs'
