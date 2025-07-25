@@ -244,7 +244,7 @@ fi
 alias myip="curl -s http://ipecho.net/plain; echo"
 alias edit-aliases="$EDITOR ~/.config/zsh/aliases.zsh"
 alias vimrc="$EDITOR ~/.config/vim/vimrc"
-alias zshrc="cd ~/.config/zsh/bootstrap.d && ls"
+alias zshrc="cd ~/.config/zsh/ && ls"
 command_exists duf && alias df="duf --only local"
 command_exists ncdu && alias duu="ncdu --color dark -rr -e"
 if command_exists python3; then alias httpserve='python3 -m http.server 2182'; else alias httpserve='python -m SimpleHTTPServer 2182'; fi
@@ -269,6 +269,13 @@ ysync() {
 }
 alias ysync="ysync"
 
+function yadm_lazygit() {
+    cd ~
+    yadm enter lazygit
+    cd -
+}
+alias ylg="yadm_lazygit"
+
 # -----------------------------------------------------------------------------
 # 8. Git productivity
 # -----------------------------------------------------------------------------
@@ -282,6 +289,7 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gd='git diff'
 alias gds='git diff --staged'
+alias lg='lazygit'
 
 # -----------------------------------------------------------------------------
 # 9. Helpers
