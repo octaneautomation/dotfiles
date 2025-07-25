@@ -109,7 +109,7 @@ zinit ice lucid wait"0a"
 zinit light Aloxaf/fzf-tab
 
 # Load fzf-git extras for Git fuzzy navigation
-zinit snippet "https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
+zinit ice wait lucid "https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh"
 
 # =====================================================================
 # 5. fzf Settings

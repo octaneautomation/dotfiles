@@ -244,6 +244,7 @@ fi
 alias myip="curl -s http://ipecho.net/plain; echo"
 alias edit-aliases="$EDITOR ~/.config/zsh/aliases.zsh"
 alias vimrc="$EDITOR ~/.config/vim/vimrc"
+alias zshrc="cd ~/.config/zsh/bootstrap.d && ls"
 command_exists duf && alias df="duf --only local"
 command_exists ncdu && alias duu="ncdu --color dark -rr -e"
 if command_exists python3; then alias httpserve='python3 -m http.server 2182'; else alias httpserve='python -m SimpleHTTPServer 2182'; fi
